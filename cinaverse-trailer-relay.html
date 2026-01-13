@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cinaverse Trailer Relay</title>
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background: #000;
+        overflow: hidden;
+        font-family: "Segoe UI", sans-serif;
+      }
+      #player-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+      iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
+      #loading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #fff;
+        font-size: 1.5rem;
+        text-align: center;
+        z-index: 10;
+      }
+      #error {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #ff4444;
+        font-size: 1.2rem;
+        text-align: center;
+        display: none;
+        z-index: 10;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="player-container">
+      <div id="loading">Đang tải trailer...</div>
+      <div id="error">Không thể phát video. Kiểm tra ID hoặc kết nối.</div>
+      <iframe
+        id="youtube-player"
+        allow="autoplay; fullscreen; picture-in-picture"
+        allowfullscreen
+      ></iframe>
+    </div>
+
+    <script>
+      // Lấy YouTube ID từ query string (?id=...)
+      const urlParams = new URLSearchParams(window.location.search);
+      const videoId = urlParams.get("id");
+
+      if (videoId) {
+        const player = document.getElementById("youtube-player");
+        const loading = document.getElementById("loading");
+        const errorDiv = document.getElementById("error");
+
+        // Tạo embed URL với các param tối ưu (autoplay, mute ban đầu nếu cần, loop, hide controls nếu muốn)
+        const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&controls=1&rel=0&modestbranding=1&showinfo=0&iv_load_policy=3&enablejsapi=1`;
+
+        player.src = embedUrl;
+
+        // Ẩn loading khi iframe load xong
+        player.onload = () => {
+          loading.style.display = "none";
+        };
+
+        // Nếu lỗi (iframe không load được)
+        player.onerror = () => {
+          loading.style.display = "none";
+          errorDiv.style.display = "block";
+        };
+      } else {
+        document.getElementById("loading").innerText =
+          "Không tìm thấy ID video!";
+      }
+    </script>
+  </body>
+</html>
